@@ -19,7 +19,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: '東静岡駅 電車状況'),
+      //home: const MyHomePage(title: '東静岡駅 電車状況'),
+      home: MyHomePage(title: '${dotenv.env['STATION_NAME']}駅 電車状況'),
     );
   }
 }
@@ -51,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
     fetchTimetableData();
   }
 
-  void fetchTimetableData(){
+  void fetchTimetableData() {
     setState(() {
       nextUpTrains = timetableFetcher.getNextUpTrains();
       nextDownTrains = timetableFetcher.getNextDownTrains();
@@ -93,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 textAlign: TextAlign.right,
               ),
             )),
-        if(nextDownTrains.isNotEmpty)
+        if (nextDownTrains.isNotEmpty)
           Text(
             '${nextDownTrains[0]["time"]}発 ${nextDownTrains[0]["destination"]}行き',
             style: const TextStyle(color: Colors.white, fontSize: 20),
