@@ -84,13 +84,13 @@ class _MyHomePageState extends State<MyHomePage> {
           color: Colors.white,
         ),
         const SizedBox(height: 20),
-        const Align(
+         Align(
             alignment: Alignment.centerRight,
             child: Padding(
-              padding: EdgeInsets.only(right: 20),
+              padding: const EdgeInsets.only(right: 20),
               child: Text(
-                '浜松・島田方面',
-                style: TextStyle(color: Colors.white, fontSize: 30),
+                '${dotenv.env['DOWN']}方面',
+                style: const TextStyle(color: Colors.white, fontSize: 30),
                 textAlign: TextAlign.right,
               ),
             )),
@@ -104,13 +104,13 @@ class _MyHomePageState extends State<MyHomePage> {
           height: 2.0,
           color: const Color.fromARGB(255, 36, 20, 20),
         ),
-        const Align(
+        Align(
             alignment: Alignment.centerRight,
             child: Padding(
-              padding: EdgeInsets.only(right: 20),
+              padding: const EdgeInsets.only(right: 20),
               child: Text(
-                '熱海・興津方面',
-                style: TextStyle(color: Colors.white, fontSize: 30),
+                '${dotenv.env['UP']}方面',
+                style: const TextStyle(color: Colors.white, fontSize: 30),
                 textAlign: TextAlign.right,
               ),
             )),
