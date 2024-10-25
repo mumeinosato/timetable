@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: const MyHomePage(title: '東静岡駅 電車状況'),
-      home: MyHomePage(title: '${dotenv.env['STATION_NAME']}駅 電車状況'),
+      home: MyHomePage(title: '${dotenv.env['STATION']}駅 電車状況'),
     );
   }
 }
