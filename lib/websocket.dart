@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -16,9 +17,18 @@ class TimetableFetcher {
     });
 
     socket.on('onTimetable', (data) {
-      //print(data);
-      nextUpTrains = List<dynamic>.from(data['nextUpTrains']);
-      nextDownTrains = List<dynamic>.from(data['nextDownTrains']);
+      nextUpTrains = List<dynamic>.from(data['nextUpTrains'])
+          .map((train) => {
+                ...train,
+                'time': formatTime(train['time']), // 整形された時間
+              })
+          .toList();
+      nextDownTrains = List<dynamic>.from(data['nextDownTrains'])
+          .map((train) => {
+                ...train,
+                'time': formatTime(train['time']), // 整形された時間
+              })
+          .toList();
     });
 
     socket.on('connect_error', (data) {
@@ -26,11 +36,46 @@ class TimetableFetcher {
     });
   }
 
-  List<dynamic> getNextUpTrains() {
-    return nextUpTrains.isNotEmpty ? nextUpTrains : [];
+  Future<List<dynamic>> getNextUpTrains() async {
+    final completer = Completer<List<dynamic>>();
+    
+    socket.emit('getTimetable');
+    socket.once('onTimetable', (data) {
+      nextUpTrains = List<dynamic>.from(data['nextUpTrains'])
+          .map((train) => {
+                ...train,
+                'time': formatTime(train['time']), // 整形された時間
+              })
+          .toList();
+      completer.complete(nextUpTrains);
+    });
+
+    return completer.future;
   }
 
-  List<dynamic> getNextDownTrains() {
-    return nextDownTrains.isNotEmpty ? nextDownTrains : [];
+  Future<List<dynamic>> getNextDownTrains() async {
+    final completer = Completer<List<dynamic>>();
+    
+    socket.emit('getTimetable');
+    socket.once('onTimetable', (data) {
+      nextDownTrains = List<dynamic>.from(data['nextDownTrains'])
+          .map((train) => {
+                ...train,
+                'time': formatTime(train['time']), // 整形された時間
+              })
+          .toList();
+      completer.complete(nextDownTrains);
+    });
+
+    return completer.future;
+  }
+
+  // 時間を整形するヘルパー関数
+  String formatTime(String time) {
+    final parts = time.split(':');
+    if (parts.length == 2) {
+      return '${parts[0]}:${parts[1].padLeft(2, '0')}'; // 分を2桁にする
+    }
+    return time; // 予期しない形式の場合はそのまま返す
   }
 }
