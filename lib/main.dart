@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     fetchTimetableData();
   }
 
-  void fetchTimetableData() async {
+  Future<void> fetchTimetableData() async {
     final upTrains = await timetableFetcher.getNextUpTrains();
     final downTrains = await timetableFetcher.getNextDownTrains();
     setState(() {
@@ -76,50 +76,54 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // 左寄せに設定
-          children: <Widget>[
-            Container(
-              height: 2.0,
-              color: Colors.white,
-            ),
-            const SizedBox(height: 20),
-            // DOWN方面
-            buildTrainDirectionHeader(
-                dotenv.env['DOWN'] ?? '下り', Alignment.centerRight),
-            const SizedBox(height: 10),
-            if (nextDownTrains.isNotEmpty) ...[
-              buildTrainInfoRow(
-                  '${nextDownTrains[0]["time"]}発 ${nextDownTrains[0]["destination"]}行き'),
-              buildRightAlignedInfo(
-                  'あと${nextDownTrains[0]["rest"]}分 ${nextDownTrains[0]["status"]}'),
-              buildTrainInfoRow(
-                  '${nextDownTrains[1]["time"]}発 ${nextDownTrains[1]["destination"]}行き'),
-              buildRightAlignedInfo(
-                  'あと${nextDownTrains[1]["rest"]}分 ${nextDownTrains[1]["status"]}'),
+      body: RefreshIndicator(
+        onRefresh: fetchTimetableData, // スワイプしてリフレッシュ時に呼び出される関数
+        child: SingleChildScrollView(
+          // スクロール可能にするためのラッパー
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // 左寄せに設定
+            children: <Widget>[
+              Container(
+                height: 2.0,
+                color: Colors.white,
+              ),
+              const SizedBox(height: 20),
+              // DOWN方面
+              buildTrainDirectionHeader(
+                  dotenv.env['DOWN'] ?? '下り', Alignment.centerRight),
+              const SizedBox(height: 10),
+              if (nextDownTrains.isNotEmpty) ...[
+                buildTrainInfoRow(
+                    '${nextDownTrains[0]["time"]}発 ${nextDownTrains[0]["destination"]}行き'),
+                buildRightAlignedInfo(
+                    'あと${nextDownTrains[0]["rest"]}分 ${nextDownTrains[0]["status"]}'),
+                buildTrainInfoRow(
+                    '${nextDownTrains[1]["time"]}発 ${nextDownTrains[1]["destination"]}行き'),
+                buildRightAlignedInfo(
+                    'あと${nextDownTrains[1]["rest"]}分 ${nextDownTrains[1]["status"]}'),
+              ],
+              const SizedBox(height: 20),
+              Container(
+                height: 2.0,
+                color: const Color.fromARGB(255, 36, 20, 20),
+              ),
+              // UP方面
+              const SizedBox(height: 20),
+              buildTrainDirectionHeader(
+                  dotenv.env['UP'] ?? '上り', Alignment.centerRight),
+              const SizedBox(height: 10),
+              if (nextUpTrains.isNotEmpty) ...[
+                buildTrainInfoRow(
+                    '${nextUpTrains[0]["time"]}発 ${nextUpTrains[0]["destination"]}行き'),
+                buildRightAlignedInfo(
+                    'あと${nextUpTrains[0]["rest"]}分 ${nextUpTrains[0]["status"]}'),
+                buildTrainInfoRow(
+                    '${nextUpTrains[1]["time"]}発 ${nextUpTrains[1]["destination"]}行き'),
+                buildRightAlignedInfo(
+                    'あと${nextUpTrains[1]["rest"]}分 ${nextUpTrains[1]["status"]}'),
+              ],
             ],
-            const SizedBox(height: 20),
-            Container(
-              height: 2.0,
-              color: const Color.fromARGB(255, 36, 20, 20),
-            ),
-            // UP方面
-            const SizedBox(height: 20),
-            buildTrainDirectionHeader(
-                dotenv.env['UP'] ?? '上り', Alignment.centerRight),
-            const SizedBox(height: 10),
-            if (nextUpTrains.isNotEmpty) ...[
-              buildTrainInfoRow(
-                  '${nextUpTrains[0]["time"]}発 ${nextUpTrains[0]["destination"]}行き'),
-              buildRightAlignedInfo(
-                  'あと${nextUpTrains[0]["rest"]}分 ${nextUpTrains[0]["status"]}'),
-              buildTrainInfoRow(
-                  '${nextUpTrains[1]["time"]}発 ${nextUpTrains[1]["destination"]}行き'),
-              buildRightAlignedInfo(
-                  'あと${nextUpTrains[1]["rest"]}分 ${nextUpTrains[1]["status"]}'),
-            ],
-          ],
+          ),
         ),
       ),
       floatingActionButton: null,
